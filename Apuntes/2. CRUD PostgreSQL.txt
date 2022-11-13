@@ -1,0 +1,19 @@
+-- 2.1 Organización del proyecto --
+Crearemos 3 tablas 1 para cada pquete 
+product, invoice y invoice_item
+
+-- 2.2 Creando la estructura del proyecto --
+Creamos una carpeta llamada pkg, luego otra 3 llamadas product invoiceheader y invoice_item
+de las cuales creamos una structura modelo en cada una.
+Tambien creamos el tipo storage donde guardaremos nuestros eventos en product. 
+
+-- 2.3 Conectar PostgresSQL con Go --
+Creamos la base de datos con las credenciales
+usuario: postgres
+contrasena: Destructor11
+Puerto: 5432
+base de datos: Godb
+
+
+-- 2.4 Migraciones. Parte 1 --
+Proceso en crear las tablas que vamos a utilizar para el proyecto.
