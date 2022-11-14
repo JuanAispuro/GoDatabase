@@ -30,17 +30,17 @@ const (
 )
 
 // psqlProduct usado para trabajar con postgres y el paquete prodcut
-type PsqlProduct struct {
+type psqlProduct struct {
 	db *sql.DB
 }
 
-// Func Psqlproduct que retorna el nuevo puntero de Psqlproduct
-func NewPsqlProduct(db *sql.DB) *PsqlProduct {
-	return &PsqlProduct{db}
+// Func psqlProduct que retorna el nuevo puntero de psqlProduct
+func newPsqlProduct(db *sql.DB) *psqlProduct {
+	return &psqlProduct{db}
 }
 
 // Migrate implementa la interfaz de product.Storage
-func (p *PsqlProduct) Migrate() error {
+func (p *psqlProduct) Migrate() error {
 	stmt, err := p.db.Prepare(psqlMigrateProduct)
 	if err != nil {
 		return err
@@ -56,7 +56,7 @@ func (p *PsqlProduct) Migrate() error {
 	return nil
 }
 
-func (p *PsqlProduct) Create(m *product.Model) error {
+func (p *psqlProduct) Create(m *product.Model) error {
 	stmt, err := p.db.Prepare(psqlCreateProduct)
 	if err != nil {
 		return err
@@ -77,7 +77,7 @@ func (p *PsqlProduct) Create(m *product.Model) error {
 }
 
 // Funcion para GetAll para consultar.
-func (p *PsqlProduct) GetAll() (product.Models, error) {
+func (p *psqlProduct) GetAll() (product.Models, error) {
 
 	stmt, err := p.db.Prepare(psqlGetAllProduct)
 	if err != nil {
@@ -108,7 +108,7 @@ func (p *PsqlProduct) GetAll() (product.Models, error) {
 }
 
 // Metodo para GetByID
-func (p *PsqlProduct) GetByID(id uint) (*product.Model, error) {
+func (p *psqlProduct) GetByID(id uint) (*product.Model, error) {
 	stmt, err := p.db.Prepare(psqlGetProductByID)
 	if err != nil {
 		return &product.Model{}, err
@@ -118,7 +118,7 @@ func (p *PsqlProduct) GetByID(id uint) (*product.Model, error) {
 }
 
 // Método Update
-func (p *PsqlProduct) Update(m *product.Model) error {
+func (p *psqlProduct) Update(m *product.Model) error {
 	stmt, err := p.db.Prepare(psqlUpdateProduct)
 	if err != nil {
 		return err
@@ -148,7 +148,7 @@ func (p *PsqlProduct) Update(m *product.Model) error {
 }
 
 // Funcion para eliminar un producto
-func (p *PsqlProduct) Delete(id uint) error {
+func (p *psqlProduct) Delete(id uint) error {
 	stmt, err := p.db.Prepare(psqlDeleteProduct)
 	if err != nil {
 		return err

@@ -36,6 +36,7 @@ func NewService(s Storage) *Service {
 func (s *Service) Migrate() error {
 	return s.storage.Migrate()
 }
+
 func (s *Service) CreateTx(tx *sql.Tx, invoiceheaderID uint, m Models) error {
 	return s.storage.CreateTx(tx, invoiceheaderID, m)
 }

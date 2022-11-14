@@ -9,16 +9,16 @@ import (
 	"github.com/JuanAispuro/GoDatabase/pkg/invoiceitem"
 )
 
-// PsqlInvoice estructura para trabajar con postgres de la factura.
-type psqlInvoice struct {
+// MySQLInvoice estructura para trabajar con postgres de la factura.
+type MySQLInvoice struct {
 	db            *sql.DB
 	storageHeader invoiceheader.Storage
 	storageItems  invoiceitem.Storage
 }
 
 // Constructor de la factura.
-func NewPsqlInvoice(db *sql.DB, h invoiceheader.Storage, i invoiceitem.Storage) *psqlInvoice {
-	return &psqlInvoice{
+func NewMySQLInvoice(db *sql.DB, h invoiceheader.Storage, i invoiceitem.Storage) *MySQLInvoice {
+	return &MySQLInvoice{
 		db:            db,
 		storageHeader: h,
 		storageItems:  i,
@@ -26,7 +26,7 @@ func NewPsqlInvoice(db *sql.DB, h invoiceheader.Storage, i invoiceitem.Storage) 
 }
 
 // Crea la interfaz invoice model
-func (p *psqlInvoice) Create(m *invoice.Model) error {
+func (p *MySQLInvoice) Create(m *invoice.Model) error {
 	tx, err := p.db.Begin()
 	if err != nil {
 		return err

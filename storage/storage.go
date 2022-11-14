@@ -7,6 +7,7 @@ import (
 	"sync"
 	"time"
 
+	"github.com/JuanAispuro/GoDatabase/pkg/product"
 	_ "github.com/go-sql-driver/mysql"
 	_ "github.com/lib/pq"
 )
@@ -18,12 +19,29 @@ var (
 	once sync.Once
 )
 
-/*
-"postgres","postgres://
+// Driver de storage
+type Driver string
 
-	postgres:Destructor11@localhost:5432/Godb?sslmode=disable"
-*/
-func NewPostgresDB() {
+// Drivers
+const (
+	MySQL    Driver = "MYSQL"
+	Postgres Driver = "POSTGRES"
+)
+
+// -------------------------------- DAO --------------------------------
+// Crea la conexión con la base de datos.
+func New(d Driver) {
+	switch d {
+	case MySQL:
+		newMySQLDB()
+	case Postgres:
+		newPostgresDB()
+	}
+}
+
+// -------------------------------- PostgresDB --------------------------------
+
+func newPostgresDB() {
 	once.Do(func() {
 		var err error
 		db, err = sql.Open("postgres", "postgres://postgres:Destructor11@localhost:5432/Godb?sslmode=disable")
@@ -39,10 +57,10 @@ func NewPostgresDB() {
 }
 
 // -------------------------------- MySQL --------------------------------
-func NewMySQLDB() {
+func newMySQLDB() {
 	once.Do(func() {
 		var err error
-		db, err = sql.Open("mysql", "root:Destructor11@tcp(localhost:3306)/godb")
+		db, err = sql.Open("mysql", "root:Destructor11@tcp(localhost:3306)/godb?parseTime=true")
 		if err != nil {
 			log.Fatalf("No pudimos abrir la base de datos: %v", err)
 		}
@@ -75,4 +93,17 @@ func timeToNull(t time.Time) sql.NullTime {
 		null.Valid = true
 	}
 	return null
+}
+
+// DAO factory para product.Storage
+func DAOProduct(driver Driver) (product.Storage, error) {
+	switch driver {
+	case Postgres:
+		return newPsqlProduct(db), nil
+	case MySQL:
+		return newMySQLProduct(db), nil
+	default:
+		return nil, fmt.Errorf("Driver no implementado")
+	}
+
 }

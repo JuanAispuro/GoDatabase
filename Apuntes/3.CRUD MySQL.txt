@@ -2,3 +2,144 @@
 Creamos la conexion con Mysql Haciendo lo mismo que con postgres
 
 -- 3.2 Migraciones --
+Creamos en el storage 3 nuevos archivos llamados mysql.product, invoiceheader y invoiceitem
+Donde creamos las 3 tablas desde visual studio hasta mysql utilizando en el main:
+    //Product
+	storageProduct := storage.NewMySQLProduct(storage.Pool())
+	serviceProduct := product.NewService(storageProduct)
+	if err := serviceProduct.Migrate(); err != nil {
+		log.Fatalf("product.Migrate: %v", err)
+	}
+
+	//InvoiceHeader
+	storageHeader := storage.NewMySQLInvoiceHeader(storage.Pool())
+	serviceHeader := product.NewService(storageHeader)
+	if err := serviceHeader.Migrate(); err != nil {
+		log.Fatalf("InvoiceHeader.Migrate: %v", err)
+	}
+
+	//InvoiceItem
+	storageItem := storage.NewMySQLInvoiceItem(storage.Pool())
+	serviceItem := product.NewService(storageItem)
+	if err := serviceItem.Migrate(); err != nil {
+		log.Fatalf("InvocieItem.Migrate: %v", err)
+	}
+
+-- 3.3 CREATE --
+Implementamos el metodo create.
+
+    storageProduct := storage.NewMySQLProduct(storage.Pool())
+
+	serviceProduct := product.NewService(storageProduct)
+	m := &product.Model{
+		Name:  "Curso de db en Go 2",
+		Price: 120,
+	}
+	if err := serviceProduct.Create(m); err != nil {
+		log.Fatalf("product.Migrate: %v", err)
+	}
+	fmt.Printf("%+v\n", m)
+
+-- 3.4 READ - Conjunto de filas --
+Aqui agregamos el metodo en storage [?parseTime=true] para poder acceder al dia de creación del tiempo.
+Utilizamos en el main: 
+//Product
+	storageProduct := storage.NewMySQLProduct(storage.Pool())
+	serviceProduct := product.NewService(storageProduct)
+
+	ms, err := serviceProduct.GetAll()
+	if err != nil {
+		log.Fatalf("product.GetALL: %v", err)
+	}
+	fmt.Println(ms)
+
+-- 3.4 READ - Una unica fila --
+Hacemos lo mismos usando GetByID
+//Product
+	storageProduct := storage.NewMySQLProduct(storage.Pool())
+	serviceProduct := product.NewService(storageProduct)
+
+	m, err := serviceProduct.GetByID(1)
+	switch {
+	case errors.Is(err, sql.ErrNoRows):
+		fmt.Println("No hay un producto con ese ID")
+	case err != nil:
+		log.Fatalf("Product.GetByID: %v", err)
+	default:
+		fmt.Println(m)
+	}
+
+-- 3.6 UPDATE --
+//Product
+	storageProduct := storage.NewMySQLProduct(storage.Pool())
+	serviceProduct := product.NewService(storageProduct)
+
+	m := &product.Model{
+		ID:    1,
+		Name:  "Curso db en Go 1.1",
+		Price: 71,
+	}
+	err := serviceProduct.Update(m)
+	if err != nil {
+		log.Fatalf("product.Update: %v", err)
+	}
+
+-- 3.7 DELETE --
+Eliminamos un archivo
+//Product
+	storageProduct := storage.NewMySQLProduct(storage.Pool())
+	serviceProduct := product.NewService(storageProduct)
+
+	err := serviceProduct.Delete(2)
+	if err != nil {
+		log.Fatalf("product.Update: %v", err)
+	}
+
+-- 3.8 Transacciones --
+Arreglamos y modificamos el CreateTx para invoiceheader y invoiceitem
+
+	storageHeader := storage.NewMySQLInvoiceHeader(storage.Pool())
+	storageItems := storage.NewMySQLInvoiceItem(storage.Pool())
+	storageInvoice := storage.NewMySQLInvoice(
+		storage.Pool(), //DB
+		storageHeader,
+		storageItems,
+	)
+	//Inserción de la base de datos
+	m := &invoice.Model{
+		Header: &invoiceheader.Model{
+			Client: "Juan",
+		},
+		Items: invoiceitem.Models{
+			&invoiceitem.Model{ProductID: 1},
+		},
+	}
+	serviceInvoice := invoice.NewService(storageInvoice)
+	if err := serviceInvoice.Create(m); err != nil {
+		log.Fatalf("invoice.Create: %v", err)
+	}
+	//Si todo sale bien en invoiceheaders y invoice items debe salir.
+
+-- 3.9 Patrón DAO --
+Data Access Object 
+Recoger datos de algun sitio y almacenarlos en algun lugar.
+
+Agregamos a storage y realizamos los cambios para prodct sql o posgres y en el main
+//driver := storage.MySQL
+	driver := storage.MySQL
+	//Crear la instancia de postgres que maneja el producto
+	storage.New(driver)
+
+	myStorage, err := storage.DAOProduct(driver)
+	if err != nil {
+		log.Fatalf("DAOProduct: %v", err)
+	}
+	serviceProduct := product.NewService(myStorage)
+
+	ms, err := serviceProduct.GetAll()
+	if err != nil {
+		log.Fatalf("product.GetAll: %v", err)
+	}
+	fmt.Println(ms)
+
+    
