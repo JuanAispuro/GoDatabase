@@ -35,11 +35,12 @@ func (p *psqlInvoice) Create(m *invoice.Model) error {
 		tx.Rollback()
 		return fmt.Errorf("Header: %w", err)
 	}
+	fmt.Printf("Factura creada con id: %d \n", m.Header.ID)
 	//Acceder al detalle
 	if err := p.storageItems.CreateTx(tx, m.Header.ID, m.Items); err != nil {
 		tx.Rollback()
 		return fmt.Errorf("Items: %w", err)
-
 	}
+	fmt.Printf("Items creados: %d \n", len(m.Items))
 	return tx.Commit() //Confirmar y que se registren el encabezado y el detalle
 }

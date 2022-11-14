@@ -111,3 +111,4 @@ Creamos la transacción invoice con su go y su paquete en pkg.
 
 
 -- Transacciones Parte 2 --
+Creamos la transacción para invoiceheader y invoice_item los dos creando CreateTX

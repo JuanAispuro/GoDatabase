@@ -22,7 +22,7 @@ const (
 		(product_id) REFERENCES products(id) ON UPDATE
 		RESTRICT ON DELETE RESTRICT
 	)`
-	psqlCreateInvoiceItem = `INSERT INTO invoice_items(invoice_header_id, product_id) VALUES($1, $2) RETURNING id, creaded_at`
+	psqlCreateInvoiceItem = `INSERT INTO invoice_items(invoice_header_id, product_id) VALUES($1, $2) RETURNING id, created_at`
 )
 
 // PsqlInvoiceItem usado para trabajar con postgres y el paquete invoiceItem
@@ -60,7 +60,7 @@ func (p *PsqlInvoiceItem) CreateTx(tx *sql.Tx, headerID uint, ms invoiceitem.Mod
 	}
 	defer stmt.Close()
 	for _, item := range ms {
-		err = stmt.QueryRow(headerID, item.productID).Scan(&item.ID, &item.CreadedAt)
+		err = stmt.QueryRow(headerID, item.ProductID).Scan(&item.ID, &item.CreatedAt)
 	}
 	if err != nil {
 		return err

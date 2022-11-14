@@ -8,10 +8,10 @@ import (
 // Modelo de invoiceitem
 type Model struct {
 	ID              uint
-	invoiceheaderID uint
-	productID       uint
-	CreadedAt       time.Time
-	updateAt        time.Time
+	InvoiceheaderID uint
+	ProductID       uint
+	CreatedAt       time.Time
+	UpdateAt        time.Time
 }
 
 // Slice de models
