@@ -7,6 +7,7 @@ import (
 	"sync"
 	"time"
 
+	_ "github.com/go-sql-driver/mysql"
 	_ "github.com/lib/pq"
 )
 
@@ -34,6 +35,21 @@ func NewPostgresDB() {
 			log.Fatalf("No pudimos hacer ping a la base de datos: %v", err)
 		}
 		fmt.Println("Conectado a la base de datos")
+	}) //Lo que este aqui adentro solo se ejecutara una vez
+}
+
+// -------------------------------- MySQL --------------------------------
+func NewMySQLDB() {
+	once.Do(func() {
+		var err error
+		db, err = sql.Open("mysql", "root:Destructor11@tcp(localhost:3306)/godb")
+		if err != nil {
+			log.Fatalf("No pudimos abrir la base de datos: %v", err)
+		}
+		if err := db.Ping(); err != nil {
+			log.Fatalf("No pudimos hacer ping a la base de datos: %v", err)
+		}
+		fmt.Println("Conectado a la MySQL")
 	}) //Lo que este aqui adentro solo se ejecutara una vez
 }
 

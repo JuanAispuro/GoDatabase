@@ -1,0 +1,4 @@
+-- 3.1 Conectarse a Mysql --
+Creamos la conexion con Mysql Haciendo lo mismo que con postgres
+
+-- 3.2 Migraciones --
