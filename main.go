@@ -8,11 +8,15 @@ import (
 )
 
 func main() {
-	storage.NewPostgresDB()
 	//Crear la instancia de postgres que maneja el producto
+	storage.NewPostgresDB()
+
+	//Create datos de product
 	storageProduct := storage.NewPsqlProduct(storage.Pool())
 	serviceProduct := product.NewService(storageProduct)
-	if err := serviceProduct.Migrate(); err != nil {
-		log.Fatalf("product.Migrate: %v", err)
+
+	err := serviceProduct.Delete(2)
+	if err != nil {
+		log.Fatalf("product.GetByID: %v", err)
 	}
 }

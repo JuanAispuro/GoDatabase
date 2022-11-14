@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"log"
 	"sync"
+	"time"
 
 	_ "github.com/lib/pq"
 )
@@ -39,4 +40,23 @@ func NewPostgresDB() {
 // Pool retorna una unica instancia de db
 func Pool() *sql.DB {
 	return db
+}
+
+// Nullstring
+func stringToNull(s string) sql.NullString {
+	//Si hay un valor entonces retorna un true.
+	null := sql.NullString{String: s}
+	if null.String != "" {
+		null.Valid = true
+	}
+	return null
+}
+
+// NullTime
+func timeToNull(t time.Time) sql.NullTime {
+	null := sql.NullTime{Time: t}
+	if !null.Time.IsZero() {
+		null.Valid = true
+	}
+	return null
 }

@@ -17,3 +17,97 @@ base de datos: Godb
 
 -- 2.4 Migraciones. Parte 1 --
 Proceso en crear las tablas que vamos a utilizar para el proyecto.
+Aqui realizamos la migración para crear la tabla desde visual studio hasta la base de datos, pero para products
+
+-- 2.5 Migraciones. Parte 2 --
+Aqui realizamos las migraciones para las demas secciones de nuestro proyecto.
+Separaremos en archivos diferentes
+Creamos las tablas de invoice_item y invoiceheader
+Migraciones de product y de invoiceheader
+/*
+	//Migración de product
+	storageProduct := storage.NewPsqlProduct(storage.Pool())
+	serviceProduct := product.NewService(storageProduct)
+	if err := serviceProduct.Migrate(); err != nil {
+		log.Fatalf("product.Migrate: %v", err)
+	}
+
+	//Migración de invoiceheader
+	storageInvoiceHeader := storage.NewPsqlInvocieHeader(storage.Pool())
+	serviceInvoiceHeader := invoiceheader.NewService(storageInvoiceHeader)
+
+	if err := serviceInvoiceHeader.Migrate(); err != nil {
+		log.Fatalf("invoiceheader.Migrate: %v", err)
+	}
+
+    //Migración de invoiceitem
+	storageInvoiceItem := storage.NewPsqlInvocieItem(storage.Pool())
+	serviceInvoiceItem := invoiceitem.NewService(storageInvoiceItem)
+
+	if err := serviceInvoiceItem.Migrate(); err != nil {
+		log.Fatalf("invoiceitem.Migrate: %v", err)
+	}
+
+	*/
+
+-- 2.6 Create --
+Haremos el registro de la base de datos, tambien creamos un identificador para ver cuando en observartions mandamos un nulo.
+
+    //Aqui pondremos los valores.
+	m := &product.Model{
+		Name:         "Curso Go base de datos 3",
+		Price:        10,
+		Observations: "On Fire",
+		//Observations tendra un string vacio.
+	}
+	if err := serviceProduct.Create(m); err != nil {
+		log.Fatalf("product.Create: %v", err)
+	}
+	fmt.Printf("%+v", m) //Para ver los valores de m
+
+-- 2.7 READ - Conjunto de filas --
+Consultarmeos con el metodo getall()
+
+    ms, err := serviceProduct.GetAll()
+        if err != nil {
+            log.Fatalf("product.GetAllL %v", err)
+        }
+        fmt.Println(ms)
+
+-- 2.8 READ - Una única Fila --
+Si mandamos un ID que no muestra nos manda sql no rows in result set.
+    m, err := serviceProduct.GetByID(1)
+	switch {
+	case errors.Is(err, sql.ErrNoRows):
+		fmt.Println("No hay producto con ese ID")
+	case err != nil:
+		log.Fatalf("product.GetByID: %v", err)
+	default:
+		fmt.Println(m)
+	}
+Para controlar el error
+
+
+-- 2.9 UPDATE --
+    m := &product.Model{
+		ID:           1,
+		Name:         "Curso de Go Base de datos",
+		Observations: "",
+		Price:        51,
+	} //& para que cambie.
+	err := serviceProduct.Update(m)
+	if err != nil {
+		log.Fatalf("product.GetByID: %v", err)
+	}
+
+-- 2.10 DELETE --
+err := serviceProduct.Delete(2)
+	if err != nil {
+		log.Fatalf("product.GetByID: %v", err)
+	}
+
+-- Transacciones Parte 1 -- 
+Creamos la transacción invoice con su go y su paquete en pkg.
+
+
+-- Transacciones Parte 2 --
